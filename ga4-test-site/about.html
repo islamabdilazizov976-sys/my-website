@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | GA4 Test Site</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D1N0VZPW7R"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-D1N0VZPW7R');
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="progress" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <div class="bar">
+            <a class="brand" href="index.html">Analytics<span>.</span>Testbed</a>
+            <nav aria-label="Main">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html" aria-current="page">About</a></li>
+                    <li><a href="resources.html">Resources</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        <section class="hero">
+            <h1>About Team 6 Project</h1>
+            <p class="lead">We audit event parameters, payload emissions, and data retention rules in GA4 for our Web
+                Analytics project.</p>
+        </section>
+
+        <div class="grid">
+            <section class="panel">
+                <h2>Event parameters</h2>
+                <p>Checking that each event carries the parameters we expect, with correct names and values.</p>
+            </section>
+            <section class="panel">
+                <h2>Payload emissions</h2>
+                <p>Inspecting the requests sent to Google Analytics in the browser and in DebugView.</p>
+            </section>
+            <section class="panel">
+                <h2>Data retention</h2>
+                <p>Reviewing governance rules for how long event-level data is kept.</p>
+            </section>
+        </div>
+
+        <section class="panel">
+            <h2>Scroll test</h2>
+            <p>Scroll down this page to check the scroll parameters on About.</p>
+            <div class="scroll-zone">
+                <span class="mark target" style="top: 88%">90% target</span>
+                <span class="mark" style="top: 97%">Bottom of the About page</span>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">GA4 validation site for the Web Analytics project. Measurement ID: G-D1N0VZPW7R.
+    </footer>
+
+    <div class="scroll-meter" aria-hidden="true"><span class="dot"></span>scroll <output>0%</output></div>
+    <script src="script.js"></script>
+</body>
+
+</html>
