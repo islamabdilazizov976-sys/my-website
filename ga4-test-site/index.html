@@ -6,13 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home | GA4 Test Site</title>
 
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) - installed once per page -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D1N0VZPW7R"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', 'G-D1N0VZPW7R');
+
+        // Test modes (for the audit only):
+        //   ?traffic_type=internal  marks this browser as internal traffic (saved); ?traffic_type=external clears it
+        //   ?debug=1  turns on debug_mode for DebugView (this tab session); ?debug=0 turns it off
+        var gaConfig = {};
+        window.__gaMode = { internal: false, debug: false };
+        try {
+            var q = new URLSearchParams(location.search);
+            if (q.get('traffic_type') === 'internal') localStorage.setItem('ga_internal', '1');
+            if (q.get('traffic_type') === 'external') localStorage.removeItem('ga_internal');
+            if (q.get('debug') === '1') sessionStorage.setItem('ga_debug', '1');
+            if (q.get('debug') === '0') sessionStorage.removeItem('ga_debug');
+            window.__gaMode.internal = localStorage.getItem('ga_internal') === '1';
+            window.__gaMode.debug = sessionStorage.getItem('ga_debug') === '1';
+        } catch (e) { }
+        if (window.__gaMode.internal) gaConfig.traffic_type = 'internal';
+        if (window.__gaMode.debug) gaConfig.debug_mode = true;
+
+        gtag('config', 'G-D1N0VZPW7R', gaConfig);
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,22 +61,148 @@
 
     <main id="main">
         <section class="hero">
-            <h1>Web Analytics Testbed</h1>
-            <p class="lead">A small site for validating GA4 tracking, auditing events, and checking debug mode.</p>
+            <p class="kicker">Tracking Validation &amp; Event Audit</p>
+            <h1>Is our GA4 data right?</h1>
+            <p class="lead">A four-page test site used to check that Google Analytics 4 records the right events, with
+                the right parameters, exactly once.</p>
         </section>
+
+        <div class="cards">
+            <section class="panel">
+                <h2>Why it matters</h2>
+                <p>Marketing budgets and content decisions rely on analytics. A missing tag, a duplicated snippet or a
+                    misnamed parameter quietly distorts every report.</p>
+            </section>
+            <section class="panel">
+                <h2>What we check</h2>
+                <ul class="checks">
+                    <li>The event fires at all</li>
+                    <li>The event name matches the plan</li>
+                    <li>Parameters carry correct values</li>
+                    <li>Each action is counted once</li>
+                </ul>
+            </section>
+            <section class="panel">
+                <h2>Our goal</h2>
+                <p>A GA4 setup we can trust, with every fix tested and proven, and a validation process we can repeat
+                    after future changes.</p>
+            </section>
+        </div>
 
         <section class="panel">
             <h2>Events to expect on this page</h2>
             <ul class="events">
-                <li><code>page_view</code><span>On every page load</span></li>
-                <li><code>scroll</code><span>Once, when you reach 90% depth</span></li>
+                <li><code>page_view</code><span>On every page load, with page_location and page_title</span></li>
+                <li><code>session_start</code><span>On the first page of a visit</span></li>
+                <li><code>scroll</code><span>Once, at 90% depth (percent_scrolled = 90)</span></li>
             </ul>
         </section>
 
         <section class="panel">
-            <h2>Scroll depth test</h2>
-            <p>Scroll to the bottom. The badge in the corner turns amber at 90%, which is when the <code>scroll</code>
-                event should fire.</p>
+            <h2>Test plan</h2>
+            <p>Each test checks three things: the correct event name, the correct parameters, and exactly one recording
+                per action. Run them with DebugView on, then repeat in Realtime.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User action</th>
+                            <th>Expected event</th>
+                            <th>Where</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>T01</td>
+                            <td>Open the homepage</td>
+                            <td><code>page_view</code></td>
+                            <td><a href="index.html">Home</a></td>
+                        </tr>
+                        <tr>
+                            <td>T02</td>
+                            <td>Open the About page</td>
+                            <td><code>page_view</code></td>
+                            <td><a href="about.html">About</a></td>
+                        </tr>
+                        <tr>
+                            <td>T03</td>
+                            <td>Open the Resources page</td>
+                            <td><code>page_view</code></td>
+                            <td><a href="resources.html">Resources</a></td>
+                        </tr>
+                        <tr>
+                            <td>T04</td>
+                            <td>Download the PDF</td>
+                            <td><code>file_download</code></td>
+                            <td><a href="resources.html">Resources</a></td>
+                        </tr>
+                        <tr>
+                            <td>T05</td>
+                            <td>Click the external link</td>
+                            <td><code>click</code> (outbound)</td>
+                            <td><a href="resources.html">Resources</a></td>
+                        </tr>
+                        <tr>
+                            <td>T06</td>
+                            <td>Scroll down to 90%</td>
+                            <td><code>scroll</code></td>
+                            <td>Home (below)</td>
+                        </tr>
+                        <tr>
+                            <td>T07</td>
+                            <td>Navigate between pages</td>
+                            <td><code>page_view</code> per page</td>
+                            <td>Menu</td>
+                        </tr>
+                        <tr>
+                            <td>T08</td>
+                            <td>Repeat in another browser</td>
+                            <td>Same events, no duplicates</td>
+                            <td>All pages</td>
+                        </tr>
+                        <tr>
+                            <td>T09</td>
+                            <td>Submit the contact form</td>
+                            <td><code>form_start</code>, <code>form_submit</code>, <code>generate_lead</code></td>
+                            <td><a href="contact.html">Contact</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Test modes</h2>
+            <p>Add these to any page address while testing. The badge in the corner shows which mode is active.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Address ending</th>
+                            <th>Effect</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>?debug=1</code></td>
+                            <td>Sends <code>debug_mode</code> so events appear in DebugView. Lasts for this tab session.
+                                Use <code>?debug=0</code> to stop.</td>
+                        </tr>
+                        <tr>
+                            <td><code>?traffic_type=internal</code></td>
+                            <td>Marks this browser as internal traffic, so the GA4 data filter can exclude it. Saved
+                                until you open <code>?traffic_type=external</code>.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Scroll depth test (T06)</h2>
+            <p>Scroll to the bottom. The badge turns amber at 90%, which is when the <code>scroll</code> event should
+                fire, once.</p>
             <div class="scroll-zone">
                 <span class="mark" style="top: 20%">20%</span>
                 <span class="mark" style="top: 50%">50%</span>
@@ -68,8 +212,8 @@
         </section>
     </main>
 
-    <footer class="site-footer">GA4 validation site for the Web Analytics project. Measurement ID: G-D1N0VZPW7R.
-    </footer>
+    <footer class="site-footer">Team 6 &middot; Tracking Validation &amp; Event Audit &middot; GA4 Measurement ID:
+        G-D1N0VZPW7R</footer>
 
     <div class="scroll-meter" aria-hidden="true"><span class="dot"></span>scroll <output>0%</output></div>
     <script src="script.js"></script>
