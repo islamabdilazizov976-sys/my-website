@@ -6,13 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resources | GA4 Test Site</title>
 
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) - installed once per page -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D1N0VZPW7R"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', 'G-D1N0VZPW7R');
+
+        // Test modes (for the audit only):
+        //   ?traffic_type=internal  marks this browser as internal traffic (saved); ?traffic_type=external clears it
+        //   ?debug=1  turns on debug_mode for DebugView (this tab session); ?debug=0 turns it off
+        var gaConfig = {};
+        window.__gaMode = { internal: false, debug: false };
+        try {
+            var q = new URLSearchParams(location.search);
+            if (q.get('traffic_type') === 'internal') localStorage.setItem('ga_internal', '1');
+            if (q.get('traffic_type') === 'external') localStorage.removeItem('ga_internal');
+            if (q.get('debug') === '1') sessionStorage.setItem('ga_debug', '1');
+            if (q.get('debug') === '0') sessionStorage.removeItem('ga_debug');
+            window.__gaMode.internal = localStorage.getItem('ga_internal') === '1';
+            window.__gaMode.debug = sessionStorage.getItem('ga_debug') === '1';
+        } catch (e) { }
+        if (window.__gaMode.internal) gaConfig.traffic_type = 'internal';
+        if (window.__gaMode.debug) gaConfig.debug_mode = true;
+
+        gtag('config', 'G-D1N0VZPW7R', gaConfig);
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,27 +61,55 @@
 
     <main id="main">
         <section class="hero">
+            <p class="kicker">Tests T04 and T05</p>
             <h1>Downloads and external links</h1>
             <p class="lead">Use these links to test the file download and outbound click events.</p>
         </section>
 
         <div class="grid">
             <section class="panel">
-                <h2>File download</h2>
+                <h2>T04 &middot; File download</h2>
                 <p>Should trigger the <code>file_download</code> Enhanced Measurement event.</p>
                 <a href="sample.pdf" download class="btn">Download syllabus PDF</a>
             </section>
             <section class="panel">
-                <h2>Outbound link</h2>
+                <h2>T05 &middot; Outbound link</h2>
                 <p>Should trigger the outbound <code>click</code> Enhanced Measurement event.</p>
                 <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Visit
                     Google (new tab)</a>
             </section>
         </div>
+
+        <section class="panel">
+            <h2>Parameters to verify in DebugView</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Expected parameters</th>
+                            <th>Pass if</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>file_download</code></td>
+                            <td><code>file_name</code>, <code>file_extension</code>, <code>link_url</code></td>
+                            <td>file_name is sample.pdf, extension is pdf, fires once per click</td>
+                        </tr>
+                        <tr>
+                            <td><code>click</code></td>
+                            <td><code>link_url</code>, <code>link_domain</code>, <code>outbound</code></td>
+                            <td>link_domain is www.google.com, outbound is true, fires once per click</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
-    <footer class="site-footer">GA4 validation site for the Web Analytics project. Measurement ID: G-D1N0VZPW7R.
-    </footer>
+    <footer class="site-footer">Team 6 &middot; Tracking Validation &amp; Event Audit &middot; GA4 Measurement ID:
+        G-D1N0VZPW7R</footer>
 
     <div class="scroll-meter" aria-hidden="true"><span class="dot"></span>scroll <output>0%</output></div>
     <script src="script.js"></script>
