@@ -1,9 +1,17 @@
-// Visual scroll-depth readout for testing. It does not send any analytics events.
+// Visual scroll-depth readout and test-mode flags. Sends no analytics events itself.
 (function () {
     var meter = document.querySelector('.scroll-meter');
     var bar = document.querySelector('.progress');
     var value = document.querySelector('.scroll-meter output');
     if (!meter || !bar || !value) return;
+
+    var flags = window.__gaMode || {};
+    if (flags.internal || flags.debug) {
+        var f = document.createElement('span');
+        f.className = 'mode-flag';
+        f.textContent = [flags.internal ? 'internal' : '', flags.debug ? 'debug' : ''].filter(Boolean).join(' + ');
+        meter.appendChild(f);
+    }
 
     function update() {
         var doc = document.documentElement;
