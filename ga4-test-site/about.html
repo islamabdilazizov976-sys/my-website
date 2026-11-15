@@ -6,13 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About | GA4 Test Site</title>
 
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) - installed once per page -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D1N0VZPW7R"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', 'G-D1N0VZPW7R');
+
+        // Test modes (for the audit only):
+        //   ?traffic_type=internal  marks this browser as internal traffic (saved); ?traffic_type=external clears it
+        //   ?debug=1  turns on debug_mode for DebugView (this tab session); ?debug=0 turns it off
+        var gaConfig = {};
+        window.__gaMode = { internal: false, debug: false };
+        try {
+            var q = new URLSearchParams(location.search);
+            if (q.get('traffic_type') === 'internal') localStorage.setItem('ga_internal', '1');
+            if (q.get('traffic_type') === 'external') localStorage.removeItem('ga_internal');
+            if (q.get('debug') === '1') sessionStorage.setItem('ga_debug', '1');
+            if (q.get('debug') === '0') sessionStorage.removeItem('ga_debug');
+            window.__gaMode.internal = localStorage.getItem('ga_internal') === '1';
+            window.__gaMode.debug = sessionStorage.getItem('ga_debug') === '1';
+        } catch (e) { }
+        if (window.__gaMode.internal) gaConfig.traffic_type = 'internal';
+        if (window.__gaMode.debug) gaConfig.debug_mode = true;
+
+        gtag('config', 'G-D1N0VZPW7R', gaConfig);
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,38 +61,173 @@
 
     <main id="main">
         <section class="hero">
+            <p class="kicker">About the project</p>
             <h1>About Team 6 Project</h1>
             <p class="lead">We audit event parameters, payload emissions, and data retention rules in GA4 for our Web
                 Analytics project.</p>
         </section>
 
-        <div class="grid">
+        <section class="panel">
+            <h2>Objectives</h2>
+            <ol class="refs">
+                <li>Verify GA4 event tracking end to end.</li>
+                <li>Check event names against the measurement plan.</li>
+                <li>Check event parameters for correct values.</li>
+                <li>Identify missing and duplicated events.</li>
+                <li>Review internal traffic and overall data quality.</li>
+                <li>Recommend concrete tracking improvements.</li>
+            </ol>
+        </section>
+
+        <div class="grid" style="margin-top:1.5rem">
             <section class="panel">
-                <h2>Event parameters</h2>
-                <p>Checking that each event carries the parameters we expect, with correct names and values.</p>
+                <h2>In scope</h2>
+                <ul class="checks">
+                    <li>Page views on all four pages</li>
+                    <li>PDF downloads on Resources</li>
+                    <li>Outbound clicks on Resources</li>
+                    <li>Scroll events</li>
+                    <li>Contact form events</li>
+                    <li>Internal traffic review</li>
+                </ul>
             </section>
             <section class="panel">
-                <h2>Payload emissions</h2>
-                <p>Inspecting the requests sent to Google Analytics in the browser and in DebugView.</p>
-            </section>
-            <section class="panel">
-                <h2>Data retention</h2>
-                <p>Reviewing governance rules for how long event-level data is kept.</p>
+                <h2>Out of scope</h2>
+                <ul class="crosses">
+                    <li>Online payments</li>
+                    <li>Shopping carts and purchase tracking</li>
+                    <li>Server-side and unrelated systems</li>
+                </ul>
             </section>
         </div>
 
         <section class="panel">
-            <h2>Scroll test</h2>
-            <p>Scroll down this page to check the scroll parameters on About.</p>
-            <div class="scroll-zone">
-                <span class="mark target" style="top: 88%">90% target</span>
-                <span class="mark" style="top: 97%">Bottom of the About page</span>
+            <h2>How we work</h2>
+            <ol class="steps">
+                <li><strong>Prepare</strong><span>Pages live; GA4 and DebugView ready.</span></li>
+                <li><strong>Act</strong><span>Perform user actions on the site.</span></li>
+                <li><strong>Inspect</strong><span>Check each event in DebugView.</span></li>
+                <li><strong>Compare</strong><span>Cross-check activity in Realtime.</span></li>
+                <li><strong>Verify</strong><span>Validate names and parameters.</span></li>
+                <li><strong>Record</strong><span>Log results and flag problems.</span></li>
+            </ol>
+        </section>
+
+        <section class="panel">
+            <h2>Tools</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tool</th>
+                            <th>What it shows</th>
+                            <th>Best used for</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tag Assistant</td>
+                            <td>Which tags fire, their status and errors</td>
+                            <td>Verifying tag installation</td>
+                        </tr>
+                        <tr>
+                            <td>DebugView</td>
+                            <td>Live event stream with full parameters</td>
+                            <td>Detailed event validation</td>
+                        </tr>
+                        <tr>
+                            <td>Realtime</td>
+                            <td>Recent activity per user, top events</td>
+                            <td>Confirming data arrives</td>
+                        </tr>
+                        <tr>
+                            <td>Browser DevTools</td>
+                            <td>Requests sent to <code>/g/collect</code></td>
+                            <td>Checking payloads and duplicates</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+        </section>
+
+        <section class="panel">
+            <h2>Challenges and planned solutions</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Challenge</th>
+                            <th>Solution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Events not appearing</td>
+                            <td>Check tag installation on every page; verify with Tag Assistant.</td>
+                        </tr>
+                        <tr>
+                            <td>Incorrect event parameters</td>
+                            <td>Review event configuration and parameter mapping in DebugView.</td>
+                        </tr>
+                        <tr>
+                            <td>Duplicate tracking</td>
+                            <td>Check for a tag installed twice, for example a theme plus a manual snippet.</td>
+                        </tr>
+                        <tr>
+                            <td>Internal traffic mixed in</td>
+                            <td>Define internal traffic and enable the filter in GA4.</td>
+                        </tr>
+                        <tr>
+                            <td>Delayed standard reports</td>
+                            <td>DebugView and Realtime validate instantly; allow about 24 hours for standard reports.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Team and contributions</h2>
+            <div class="team">
+                <article class="person">
+                    <h3>Islam Abdilazizov</h3>
+                    <p class="role">Project architecture and GA4 stream setup</p>
+                    <p>Overall design, 4-page site stream, audit report editing.</p>
+                </article>
+                <article class="person">
+                    <h3>Partho Pratim Das</h3>
+                    <p class="role">Test case design and debug audit</p>
+                    <p>8+ case plan, Tag Assistant setup, payload validation.</p>
+                </article>
+                <article class="person">
+                    <h3>Tanjirul Islam</h3>
+                    <p class="role">Realtime analysis and traffic simulation</p>
+                    <p>Cross-browser tests, 3-peer session management.</p>
+                </article>
+                <article class="person">
+                    <h3>Yamin Anonno Akib</h3>
+                    <p class="role">Data governance</p>
+                    <p>traffic_type filter, retention policy audit, formatting.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Sources</h2>
+            <ul class="refs">
+                <li>Google Analytics Help. &ldquo;[GA4] DebugView.&rdquo; Google, support.google.com/analytics.</li>
+                <li>Google Analytics Help. &ldquo;[GA4] Realtime reports.&rdquo; Google, support.google.com/analytics.
+                </li>
+                <li>Google Analytics Help. &ldquo;About events.&rdquo; Google, support.google.com/analytics.</li>
+                <li>Google Analytics Help. &ldquo;Enhanced measurement events.&rdquo; Google,
+                    support.google.com/analytics.</li>
+            </ul>
         </section>
     </main>
 
-    <footer class="site-footer">GA4 validation site for the Web Analytics project. Measurement ID: G-D1N0VZPW7R.
-    </footer>
+    <footer class="site-footer">Team 6 &middot; Tracking Validation &amp; Event Audit &middot; GA4 Measurement ID:
+        G-D1N0VZPW7R</footer>
 
     <div class="scroll-meter" aria-hidden="true"><span class="dot"></span>scroll <output>0%</output></div>
     <script src="script.js"></script>
